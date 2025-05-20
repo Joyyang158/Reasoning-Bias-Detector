@@ -11,7 +11,6 @@ This repository introduces the **Reasoning-Based Bias Detector (RBD)**, a plug-i
 - **Distilled Reasoning Fine-Tuning**: Train models using distilled reasoning from larger LLMs.
 - **Integration**: Attach RBD to any LLM evaluator for bias detection and correction.
 
----
 
 ## 🤖 Model Checkpoints
 
@@ -24,7 +23,6 @@ We provide RBD models of different sizes on Hugging Face:
 
 These models are fine-tuned to detect four types of structural bias: **verbosity**, **position**, **bandwagon**, and **sentiment**.
 
----
 
 ## 📊 Datasets
 
@@ -33,7 +31,6 @@ We also release two datasets used in training and evaluation:
 - 📂 [RBD-Bias4-Eval](https://huggingface.co/datasets/joyfine/LLM-Bias4-Eval) — Contains structured evaluation examples labeled for bias.
 - 📂 [RBD-ReasoningSupervision](joyfine/RBD-ReasoningSupervision) — Provides reasoning annotations for supervised fine-tuning.
 
----
 
 ## 💻 Code Usage
 
