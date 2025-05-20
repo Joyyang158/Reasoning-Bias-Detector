@@ -12,7 +12,7 @@ This repository introduces the **Reasoning-Based Bias Detector (RBD)**, a plug-i
 - **Integration**: Attach RBD to any LLM evaluator for bias detection and correction.
 
 
-## 🤖 Model Checkpoints
+## 🤖 RBD Models
 
 We provide RBD models of different sizes on Hugging Face:
 
