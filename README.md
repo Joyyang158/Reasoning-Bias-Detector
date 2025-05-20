@@ -29,7 +29,7 @@ These models are fine-tuned to detect four types of structural bias: **verbosity
 We also release two datasets used in training and evaluation:
 
 - 📂 [RBD-Bias4-Eval](https://huggingface.co/datasets/joyfine/LLM-Bias4-Eval) — Contains structured evaluation examples labeled for bias.
-- 📂 [RBD-ReasoningSupervision](joyfine/RBD-ReasoningSupervision) — Provides reasoning annotations for supervised fine-tuning.
+- 📂 [RBD-ReasoningSupervision](https://huggingface.co/datasets/joyfine/RBD-ReasoningSupervision) — Provides reasoning annotations for supervised fine-tuning.
 
 
 ## 💻 Code Usage
