@@ -82,7 +82,6 @@ accelerate launch --num_processes 2 Scripts_Model_Train/train_classification.py 
   --config Scripts_Model_Train/config_train_classification.yaml
 ```
 - config: points to the YAML configuration file that defines the training setup for the classification model.
----
 
 ## 5. RBD Inference & Evaluation
 
