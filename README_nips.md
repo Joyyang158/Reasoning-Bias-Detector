@@ -83,7 +83,7 @@ accelerate launch --num_processes 2 Scripts_Model_Train/train_classification.py 
 ```
 - config: points to the YAML configuration file that defines the training setup for the classification model.
 
-## 5. RBD Inference & Evaluation
+### 5. RBD Inference & Evaluation
 
 - Run RBD inference on the test set: `bash Scripts_Model_Inference/testset_inference.sh
 `
@@ -102,7 +102,7 @@ python Scripts_Model_Inference/testset_inference.py \
 - To evaluate the bias detection performance of RBD: `Scripts_Evaluation/model_train_evaluation.py`
 
 
-## 6. Apply RBD Reasoning to LLM Evaluators
+### 6. Apply RBD Reasoning to LLM Evaluators
 First, generate RBD reasoning traces for original LLM evaluations: `bash Scripts_Model_to_LLM_Judge_Inference/model_CoT_to_llm_judge_inference.sh`
 
 
