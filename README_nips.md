@@ -2,14 +2,20 @@
 
 ![RBD Pipeline Overview](images/pipeline.png)
 
-## Overview
+## 🧠 Overview of the RBD
 
-This repository introduces the **Reasoning-Based Bias Detector (RBD)**, a plug-in module designed to identify and mitigate evaluation bias in large language models. RBD operates through a structured pipeline involving:
+During inference, **RBD** examines potentially biased evaluation results produced by an LLM-as-a-Judge.  
+If bias is detected, RBD generates a reasoning-based bias analysis to guide the LLM in reflecting on and possibly revising its evaluation; otherwise, the original judgment is retained.
 
-- **Bias Dataset Construction**: Build datasets targeting specific structural biases (e.g., verbosity, position).
-- **Reasoning Supervision**: Collect high-quality reasoning for both biased and unbiased cases.
-- **Distilled Reasoning Fine-Tuning**: Train models using distilled reasoning from larger LLMs.
-- **Integration**: Attach RBD to any LLM evaluator for bias detection and correction.
+To train RBD, we design a **data collection and distilled reasoning-based training pipeline**:
+
+- We first construct a biased dataset that targets specific structural bias types (e.g., verbosity, position).
+- Then, we collect evaluation results from LLM judges that may contain bias.
+- A stronger teacher model, referred to as a **Language Reasoning Model (LRM)**, produces bias analysis traces based on the evaluation context.
+- These reasoning traces are filtered and used to fine-tune a base LRM into the final RBD model.
+
+The resulting RBD model can be plugged into any LLM evaluator to effectively detect and mitigate evaluation bias.
+
 
 ## 📊 Datasets
 
