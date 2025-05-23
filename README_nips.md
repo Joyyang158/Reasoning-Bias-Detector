@@ -27,11 +27,32 @@ We release two datasets used in training and evaluation:
 
 ## 💻 Code Usage
 
-Before running any scripts, navigate to the root code directory:
+### 📦 Environment
+
+- **Python Version**: 3.10.12  
+- **Dependencies**: All required packages are listed in `requirements.txt` and can be installed using:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 🔐 API Key Setup
+This project uses APIs from **OpenAI (GPT)**, **Claude (Anthropic)**, and **TogetherAI** to run LLM inference.
+
+Before running any scripts, please make sure you have the following API keys set as environment variables:
+
+```bash
+export GPT_API_KEY=your_openai_key
+export TogehterAI_API_KEY=your_togetherai_key
+export Claude_API_KEY=your_claude_key
+```
+
+Finally, before running any scripts, navigate to the root code directory:
 
 ```bash
 cd code
 ```
+
 
 ### 1. Construct datasets RBD-Bias4-Eval ($\mathcal{D}$ and $\mathcal{D}_{\text{bias}}$)
 
@@ -155,4 +176,5 @@ Explore RBD performance across various settings:
 - Recursive Inference: Use RBD recursively to refine reasoning and detection
 
     `Scripts_Recursive_Inference`
+
 
