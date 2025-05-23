@@ -248,7 +248,7 @@ python Scripts_Model_to_LLM_Judge_Inference/LLM_judge_inference_with_CoT.py \
   --LLM_evaluator <llm_name> \
   --csv_file_path <csv_path> \
   --CoT_base_model <base_model_name> \
-  --experiment_tag CoT \
+  --experiment_tag <experiment_tag> \
   --bias_type <bias_type>
 ```
 
