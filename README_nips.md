@@ -56,124 +56,237 @@ cd code
 
 ### 1. Construct datasets RBD-Bias4-Eval ($\mathcal{D}$ and $\mathcal{D}_{\text{bias}}$)
 
-- Code for generating the unbiased and biased evaluation datasets is located in: `Scripts_Dataset_Construction`
+The unbiased and biased evaluation datasets are constructed using scripts in `Scripts_Dataset_Construction`:
+
+- `position_bias_data_generation.py`: generates samples with answer order swapped to test position bias.
+- `sentiment_bias_data_generation.py`: modifies the sentiment of options to evaluate sentiment bias.
+- `verbosity_bias_data_generation.py`: creates pairs with different lengths to test verbosity bias.
+
+**Bandwagon bias** does not require a separate dataset; it is introduced during inference by adding a statement like:  
+*“90% believe [negative option] is better.”*
 
 ### 2. Evaluate LLM Judgments on $\mathcal{D}$ and $\mathcal{D}_{\text{bias}}$
 
-- Scripts for generating LLM answers under each bias type: `Scripts_LLM_Judge_Answer_Generation`
+- Scripts for generating LLM answers under each bias type are located in: `Scripts_LLM_Judge_Answer_Generation`  
+  - `bandwagon_answer_generation.py`
+  - `position_answer_generation.py`
+  - `sentiment_answer_generation.py`
+  - `verbosity_answer_generation.py`
 
-
-- Evaluation scripts comparing accuracy and consistency results on $\mathcal{D}$ vs. $\mathcal{D}_{\text{bias}}$ are located in: `Scripts_Evaluation/LLM-Judge_evaluation.py`
+- Evaluation script for comparing accuracy and consistency on $\mathcal{D}$ vs. $\mathcal{D}_{\text{bias}}$ :
+    - `Scripts_Evaluation/LLM-Judge_evaluation.py`
 
 ### 3. Construct Reasoning Supervision Dataset: RBD-ReasoningSupervision
 
-- Code for generating reasoning-based supervision data: `Scripts_CoT_Generation`
+- Code for generating reasoning-based supervision data is located in: `Scripts_CoT_Generation`  
+  - `bandwagon_arena_CoT_generation.py`  
+  - `position_arena_CoT_generation.py`  
+  - `sentiment_ScienceQA_CoT_generation.py`  
+  - `verbosity_GSM8K_CoT_generation.py`
+
+- First, use **DeepSeek-R1** to generate reasoning traces for each bias type individually.  
+- Then, use `Scripts_CoT_Model_Training_Dataset/dataset_construction.py` to integrate the outputs into a single training dataset.
 
 ### 4. Train RBD
 
-We provide training scripts both with and without DeepSpeed:
+We provide training scripts with and without DeepSpeed depending on model size:
 
-🔹 Without DeepSpeed (for small models like RBD-1.5B):
-```bash 
-accelerate launch --num_processes 2 Scripts_Model_Train/train_full.py \
-    --config Scripts_Model_Train/config_train_full.yaml \
-    --experiment_tag CoT
+🔹 **Without DeepSpeed** (recommended for smaller models like RBD-1.5B):
+```bash
+accelerate launch --num_processes <N> Scripts_Model_Train/train_full.py \
+    --config <config_path> \
+    --experiment_tag <tag>
 ```
 
-- config: path to training config YAML file
-- experiment_tag: QA for bias label training, or CoT for reasoning supervision
 
-🔹 With DeepSpeed (for larger models):
+🔹 **With DeepSpeed** (recommended for larger models like RBD-7B+):
 
-
-```bash 
+```bash
 accelerate launch \
-    --config_file Scripts_Model_Train/deepspeed_zero3.yaml \
+    --config_file <deepspeed_config_path> \
     Scripts_Model_Train/deepspeed_train_full.py \
-    --config Scripts_Model_Train/deepspeed_config_train_full.yaml \
-    --experiment_tag CoT
+    --config <config_path> \
+    --experiment_tag <tag>
 ```
 
 - config_file: specifies the path to the DeepSpeed configuration file
 
-To train a classification baseline model (without reasoning supervision):
+🔹 Train a Classification Baseline Model (uses only bias type labels as supervision, without reasoning):
 
 ```bash
-accelerate launch --num_processes 2 Scripts_Model_Train/train_classification.py \
-  --config Scripts_Model_Train/config_train_classification.yaml
+accelerate launch --num_processes <N> Scripts_Model_Train/train_classification.py \
+    --config <config_path>
 ```
-- config: points to the YAML configuration file that defines the training setup for the classification model.
 
-### 5. RBD Inference & Evaluation
+---
 
-- Run RBD inference on the test set: `bash Scripts_Model_Inference/testset_inference.sh
-`
+**Explanation of Arguments:**
 
-Core command:
+- `<N>`: Number of processes to use for training. Typically matches the number of available GPUs.
+- `<config_path>`: Path to the YAML configuration file that defines model architecture, data paths, training hyperparameters (e.g., learning rate, batch size), and logging behavior.
+- `<tag>`: Specifies the type of experiment. Options include:
+  - `"QA"`: Classification-style training using only bias type labels as supervision.
+  - `"CoT"`: Training using reasoning-based supervision.
+- `<deepspeed_config_path>`: Path to the DeepSpeed configuration YAML file, which defines advanced memory optimization strategies (e.g., ZeRO Stage 3, CPU offloading, mixed precision).
+
+---
+
+To run training using a shell script, execute:
+
+- For full RBD training without DeepSpeed:
+
+```bash
+bash Scripts_Model_Train/train_full.sh
+```
+
+- For full RBD training with DeepSpeed (recommended for larger models):
+
+```bash
+bash Scripts_Model_Train/deepspeed_train_full.sh
+```
+
+- For classification baseline training (uses only bias type labels, no reasoning):
+```bash
+bash Scripts_Model_Train/train_classification.sh
+```
+### 5. Run RBD Inference on the Test Set
+
+To evaluate RBD’s performance, we run inference on the **test split** of the `RBD-ReasoningSupervision` dataset. The output can be directly compared against prompting-based baselines and classification-based models.
 
 ```bash
 python Scripts_Model_Inference/testset_inference.py \
-  --model_path deepseek-ai/DeepSeek-R1-Distill-Qwen-14B \
-  --base_model_name DeepSeek-R1-Distill-Qwen-14B \
-  --dataset_name joyfine/LLM_Bias_Detection_CoT_Training \
-  --experiment_tag Zero-shot \
-  --output_method save-csv
+  --model_path <model_path> \
+  --base_model_name <base_model_name> \
+  --dataset_name <dataset_name> \
+  --experiment_tag <tag> \
+  --output_method <output_method>
 ```
 
-- To evaluate the bias detection performance of RBD: `Scripts_Evaluation/model_train_evaluation.py`
+You can also evaluate a classification baseline model trained only with bias type labels (without reasoning supervision):
 
+```bash
+python Scripts_Model_Inference/testset_classification_inference.py \
+  --model_path <model_path> \
+  --base_model_name <base_model_name> \
+  --dataset_name <dataset_name> \
+  --experiment_tag <tag> \
+  --output_method <output_method>
+```
+
+
+---
+**Explanation of Arguments:**
+
+- `<model_path>`: Filesystem path or Hugging Face Hub ID of the model to be used for inference. Can be a pretrained model or a fine-tuned checkpoint.
+
+- `<base_model_name>`: Name of the base model architecture (e.g., `DeepSeek-R1-Distill-Qwen-1.5B`) used for logging and output metadata.
+
+- `<dataset_name>`: Name or path of the dataset used for inference.
+
+- `<tag>`: Indicates the type of experiment or evaluation method. Valid choices include:
+  - `Zero-shot`: Direct use of a pretrained model without any task-specific training or examples.
+  - `Few-shot-QA`: In-context learning with 4 bias labels only.
+  - `Few-shot-CoT`: In-context learning with 4 few reasoning examples.
+  - `Fine-tune-QA-Classification`: Classification baseline trained with only bias labels, without reasoning.
+  - `Fine-tune-CoT_with_Bias_Type`: RBD inference.
+
+- `<output_method>`: Controls how inference results are output:
+  - `save-csv`: Save all predictions to a CSV file.
+  - `print-sample`: Print a few example outputs to the console for quick inspection.
+  - `api-deepseek`: Use DeepSeek's online API for generation (if applicable).
+
+---
+
+To run the inference using a shell script, execute:
+
+- For the full RBD model (reasoning-based inference):
+
+```bash
+bash Scripts_Model_Inference/testset_inference.sh
+```
+
+- For the classification baseline model (trained with bias labels only):
+
+
+```bash
+bash Scripts_Model_Inference/testset_classification_inference.sh
+```
+
+To evaluate the RBD performance on the test set, we provide the evaluation script: `Scripts_Evaluation/model_train_evaluation.py`
 
 ### 6. Apply RBD Reasoning to LLM Evaluators
-First, generate RBD reasoning traces for original LLM evaluations: `bash Scripts_Model_to_LLM_Judge_Inference/model_CoT_to_llm_judge_inference.sh`
 
+To assess whether RBD-generated reasoning can improve the LLM-as-a-Judge evaluations, we provide a two-step process:
 
-Core command:
+🔹 **Step 1: Generate RBD Reasoning Traces for Original LLM Judgments**
+
 ```bash
 python Scripts_Model_to_LLM_Judge_Inference/model_CoT_to_llm_judge_inference.py \
-  --model_path "$MODEL_PATH" \
-  --csv_file_path "$CSV_PATH" \
-  --LLM_evaluator "$MODEL" \
-  --CoT_base_model "$BASE_MODEL" \
-  --bias_type "$BIAS"
+  --model_path <model_path> \
+  --csv_file_path <csv_path> \
+  --LLM_evaluator <llm_name> \
+  --CoT_base_model <base_model_name> \
+  --bias_type <bias_type>
 ```
 
-Then, LLM will rethink the evaluation results using RBD-generated reasoning: `bash Scripts_Model_to_LLM_Judge_Inference/LLM_judge_inference_with_CoT.sh`
-
-Core command:
+🔹 **Step 2: Rethink LLM Judgments with RBD Reasoning**
 
 ```bash
 python Scripts_Model_to_LLM_Judge_Inference/LLM_judge_inference_with_CoT.py \
-  --LLM_evaluator "$MODEL" \
-  --csv_file_path "$CSV_PATH" \
-  --CoT_base_model "$BASE_MODEL" \
-  --experiment_tag "CoT" \
-  --bias_type "$BIAS"
+  --LLM_evaluator <llm_name> \
+  --csv_file_path <csv_path> \
+  --CoT_base_model <base_model_name> \
+  --experiment_tag <experiment_tag> \
+  --bias_type <bias_type>
 ```
 
-### 7. Evaluate Debiased LLM Judgments with RBD
-- Run evaluation on debiased LLM judgments: `python Scripts_Evaluation/LLM-Judge_with_CoT_evaluation.py`
+---
+### Explanation of Arguments
+
+- `<model_path>`: Path to the trained RBD model used to generate reasoning traces.
+- `<csv_path>`: Path to the original LLM-as-a-Judge evaluation CSV file to be re-evaluated.
+- `<llm_name>`: Name of the LLM evaluator.
+- `<base_model_name>`: Identifier for the base model used in RBD reasoning generation.
+- `<bias_type>`: One of the target structural biases (e.g., `position`, `verbosity`, `sentiment`, `bandwagon`).
+- `experiment_tag`: Specifies the type of RBD feedback used during LLM re-evaluation:
+  - `"CoT"`: Use RBD-generated reasoning traces as justification.
+  - `"QA"`: Use RBD-predicted bias type label only as feedback, without reasoning.
+
+---
 
 
-### 8. Additional Experiments
+To run these two steps via shell scripts:
+
+
+```bash
+bash Scripts_Model_to_LLM_Judge_Inference/model_CoT_to_llm_judge_inference.sh
+
+bash Scripts_Model_to_LLM_Judge_Inference/LLM_judge_inference_with_CoT.sh
+```
+
+Finally, to evaluate debiased LLM judgments, we provide the evalution script: `python Scripts_Evaluation/LLM-Judge_with_CoT_evaluation.py`
+
+
+### 7. Additional Experiments
 Explore RBD performance across various settings:
 
-- Baselines: Compare with prompt-based and fine-tuned judge baselines
+- Baselines: Compare with prompt-based and fine-tuned judge baselines:
 
     `Scripts_Baselines`
 
-- Cross-Domain: Test RBD's generalization on a verbosity dataset from the FactQA domain
+- Cross-Domain: Test RBD's generalization on a verbosity dataset from the FactQA domain:
 
     `Scripts_Cross_Domain`
 
-- Multi-Bias: Evaluate RBD on multiple simultaneous biases (e.g., verbosity + bandwagon)
+- Multi-Bias: Evaluate RBD on multiple simultaneous biases (e.g., verbosity + bandwagon):
 
     `Scripts_Multi_Bias`
 
-- QA vs. CoT: Compare classification models trained on bias labels vs. RBD trained on reasoning annotations using specially reconstructed datasets
+- QA vs. CoT: Compare classification models trained on bias labels vs. RBD trained on reasoning annotations using specially reconstructed datasets:
 
     `Scripts_QA_vs_CoT`
 
-- Recursive Inference: Use RBD recursively to refine reasoning and detection
+- Recursive Inference: Use RBD recursively to debias LLM evaluations:
 
     `Scripts_Recursive_Inference`
 
