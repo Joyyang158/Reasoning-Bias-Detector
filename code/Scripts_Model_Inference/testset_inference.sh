@@ -2,9 +2,7 @@
 
 export HF_HOME="/qumulo/shared_data/haoyan_hf_cache/"
 
-export REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/gehealthcarerootca1.crt
-
-export HF_TOKEN='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'
+export HF_TOKEN='xxx'
 
 huggingface-cli login --token "$HF_TOKEN"
 

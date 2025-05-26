@@ -2,8 +2,6 @@
 
 export HF_HOME="/qumulo/shared_data/haoyan_hf_cache/"
 
-export REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/gehealthcarerootca1.crt
-
 
 # python Scripts_QA_vs_CoT/inference_QA_vs_CoT.py \
 #     --model_path /qumulo/haoyan/DeepSeek-R1-Distill-Qwen-1.5B-full-fine-tuned_QA_Classification_with_bias_type/checkpoint-380 \

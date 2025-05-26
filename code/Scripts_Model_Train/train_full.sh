@@ -2,9 +2,7 @@
 
 export HF_HOME="/qumulo/shared_data/haoyan_hf_cache/"
 
-export REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/gehealthcarerootca1.crt
-
-export WANDB_API_KEY="f1ac3b92a14678e4bb758f670554d9fd36549410"
+export WANDB_API_KEY="xxx"
 
 accelerate launch --num_processes 2 Scripts_Model_Train/train_full.py --config Scripts_Model_Train/config_train_full.yaml --experiment_tag QA
 # python Train/train_full.py --config Train/config_train_full.yaml

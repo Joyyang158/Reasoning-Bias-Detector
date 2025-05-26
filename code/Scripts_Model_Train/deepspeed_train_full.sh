@@ -2,11 +2,10 @@
 
 export HF_HOME="/qumulo/shared_data/haoyan_hf_cache/"
 
-export REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/gehealthcarerootca1.crt
 
-export WANDB_API_KEY="f1ac3b92a14678e4bb758f670554d9fd36549410"
+export WANDB_API_KEY="xxx"
 
-export HF_TOKEN='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'
+export HF_TOKEN='xxx'
 
 huggingface-cli login --token "$HF_TOKEN"
 

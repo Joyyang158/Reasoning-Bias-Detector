@@ -2,8 +2,6 @@
 
 export HF_HOME="/qumulo/shared_data/haoyan_hf_cache/"
 
-export REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/gehealthcarerootca1.crt
-
 
 # MODEL_PATH="/qumulo/haoyan/DeepSeek-R1-Distill-Qwen-14B-full-fine-tuned_CoT_with_bias_type/final_model"
 # BASE_MODEL="DeepSeek-R1-Distill-Qwen-14B"

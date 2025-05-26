@@ -2,7 +2,6 @@
 
 export HF_HOME="/qumulo/shared_data/haoyan_hf_cache/"
 
-export REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/gehealthcarerootca1.crt
 
 # python Scripts_Baselines/baseline_inference.py \
 #     --model_path Skywork/Skywork-Critic-Llama-3.1-8B \
