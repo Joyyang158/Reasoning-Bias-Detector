@@ -307,5 +307,14 @@ Explore RBD performance across various settings:
 If you find our work useful in your research or applications, please consider citing:
 
 ```bibtex
+@misc{yang2025largelanguagemodelreliable,
+      title={Any Large Language Model Can Be a Reliable Judge: Debiasing with a Reasoning-based Bias Detector}, 
+      author={Haoyan Yang and Runxue Bao and Cao Xiao and Jun Ma and Parminder Bhatia and Shangqian Gao and Taha Kass-Hout},
+      year={2025},
+      eprint={2505.17100},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2505.17100}, 
+}
 ```
 
