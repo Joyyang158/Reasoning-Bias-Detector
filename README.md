@@ -1,8 +1,10 @@
-# Reasoning-Based Bias Detector (RBD)
+<h1 align="center">Any Large Language Model Can Be a Reliable Judge:<br>Debiasing with a Reasoning-based Bias Detector</h1>
+<p align="center">
+  <a href="https://arxiv.org/pdf/2505.17100"><img src="https://img.shields.io/badge/Paper-arXiv-b31b1b" alt="Paper"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-2196F3" alt="License"></a>
+</p>
 
-![RBD Pipeline Overview](images/pipeline.png)
-
-## 🧠 Overview of the RBD
+## 🧠 Overview of the Reasoning-based Bias Detector (RBD)
 
 During inference, RBD examines potentially biased evaluation results produced by an LLM-as-a-Judge.  
 If bias is detected, RBD generates a reasoning-based bias analysis to guide the LLM in reflecting on and possibly revising its evaluation; otherwise, the original judgment is retained.
@@ -15,6 +17,8 @@ To train RBD, we design a data collection and distilled reasoning-based training
 - These reasoning traces are filtered and used to fine-tune a base LRM into the final RBD model.
 
 The resulting RBD model can be plugged into any LLM evaluator to effectively detect and mitigate evaluation bias.
+
+![RBD Pipeline Overview](images/pipeline.png)
 
 
 ## 🤖 RBD Models
@@ -307,14 +311,13 @@ Explore RBD performance across various settings:
 If you find our work useful in your research or applications, please consider citing:
 
 ```bibtex
-@misc{yang2025largelanguagemodelreliable,
-      title={Any Large Language Model Can Be a Reliable Judge: Debiasing with a Reasoning-based Bias Detector}, 
-      author={Haoyan Yang and Runxue Bao and Cao Xiao and Jun Ma and Parminder Bhatia and Shangqian Gao and Taha Kass-Hout},
-      year={2025},
-      eprint={2505.17100},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2505.17100}, 
+@article{yang2026any,
+  title={Any large language model can be a reliable judge: Debiasing with a reasoning-based bias detector},
+  author={Yang, Haoyan and Bao, Runxue and Xiao, Cao Danica and Ma, Jun and Bhatia, Parminder and Gao, Shangqian and Kass-Hout, Taha},
+  journal={Advances in Neural Information Processing Systems},
+  volume={38},
+  pages={6318--6362},
+  year={2026}
 }
 ```
 
